@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html 
+xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" 
+lang="pt-br">
+
+<head>
+    <title>Gerenciador de Endereços</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link th:href="@{/css/bootstrap.min.css}" href="../static/css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-theme.min.css}" href="../static/css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/customizado.css}" href="../static/css/customizado.css" rel="stylesheet"/>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    	<a class="navbar-brand">Avaliação Desenvolvedor Java</a>
+    	<a class="navbar-brand">Desenvolvido por Thiago Oliveira Lopes - Email: thiago.csgo@gmail.com</a>
+    </nav>
+
+    <div class="css-exmensagens">
+		<div id="msgError" class="alert alert-danger alert-dismissible"></div>
+		<div id="msgAlert" class="alert alert-warning alert-dismissible"></div>
+		<div id="msgSuccess" class="alert alert-info alert-dismissible"></div>
+		<div layout:fragment="content">
+      	</div>
+    </div>
+
+	<script>
+    function limparMensagens() {
+        $(".alert").each(function (a) {
+          $(this).hide();
+        });
+      }
+  
+    function exibirMensagem(message, alert) {
+        limparMensagens();
+        if (alert) {
+          alert.text(message).append('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>').show();
+        }
+      }
+	</script>
+	<script th:href="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script th:href="@{/js/jquery.mask.min.js}" src="../../js/jquery.mask.min.js"></script>
+    <script th:href="@{/js/jquery.validate.min.js}" src="../../js/jquery.validate.min.js"></script>
+    <script layout:fragment="jsOnPage"></script>
+</body>
+</html>

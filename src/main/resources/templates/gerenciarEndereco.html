@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="index" 
+	lang="pt-br">
+
+	<body>
+		<div layout:fragment="content" class="container">
+	        <div class="css-caixa">
+	            <section id="forms">
+	                <h2>Cadastro de endereços</h2>
+	                    <form id="formcadastro" action="" method="GET">
+	                    	<div ><input type="hidden" id="idEnd" name="id"  th:value="${id}"/></div>
+	                    	<div class="col-md-3 form-group">
+	                            <label for="numCep">*CEP:</label>
+	                            <input required="true" type="text" id="cep" name="numCep" class="form-control" placeholder = "Preencha o Cep."/>
+	                        </div>
+	                        
+	                        <div class="col-md-10 form-group">
+	                        	<label for="logradouro">*Logradouro:</label>
+	                            <input required="true" type="text" name="logradouro" class="form-control" placeholder = "Preencha o Logradouro."/>
+	                        </div>
+	                        
+	                        <div class="col-md-3 form-group">
+	                           	<label for="numEndereco">*Número:</label>
+	                            <input required="true" type="text" name="numEndereco" class="form-control" placeholder = "Preencha o Número."/>
+	                        </div>
+	                        
+	                        <div class="col-md-12 form-group"> 
+	                            <label for="complemento">Complemento:</label>
+	                            <input type="text" name="complemento" class="form-control" placeholder = "Preencha o Complemento."/>
+	                        </div>
+	                        
+	                        <div class="col-md-8 form-group">
+	                           	<label for="bairro">Bairro:</label>
+	                            <input type="text" name="bairro" class="form-control" placeholder = "Preencha o Bairro."/>
+	                        </div>
+	                        
+	                        <div class="col-md-8 form-group">
+	                            <label for="cidade">*Cidade:</label>
+	                            <input required="true" type="text" name="cidade" class="form-control" placeholder = "Preencha a Cidade."/>
+	                        </div>    
+	                        
+	                        <div class="col-md-8 form-group">
+	                            <label for="estado">*Estado:</label>
+	                            <input required="true" type="text" name="estado" class="form-control" placeholder = "Preencha o Estado."/>
+	                        </div> 
+	                           	
+	                        <div class="col-md-12 form-group">
+		                        <button type="submit" id="btnSalvar" class="btn btn-embossed btn-primary form-group" >Salvar</button>
+		                        <a class="btn btn-embossed btn-primary form-group" href="exibirEnderecos.html" th:href="@{/exibirEnderecos}" role="button">Voltar</a>
+						</div>
+	                    </form>
+	                    <form id="forwardForm" method="GET" action="/"></form>
+	                    </section>
+	                </div>
+			</div>
+ <script layout:fragment="jsOnPage" th:inline="javascript">
+    /*<![CDATA[*/
+      var enderecoId = /*[[${id}]]*/ 0;
+
+      function carregaFormulario(endereco) {
+    	  $('input[name="numCep"]').val(endereco && endereco.numCep ? endereco.numCep : "");
+      	  $('input[name="logradouro"]').val(endereco && endereco.logradouro ? endereco.logradouro : "");
+      	  $('input[name="bairro"]').val(endereco && endereco.bairro ? endereco.bairro : "");
+          $('input[name="cidade"]').val(endereco && endereco.cidade ? endereco.cidade : "");
+          $('input[name="estado"]').val(endereco && endereco.estado ? endereco.estado : "");
+      	  $('input[name="numEndereco"]').val(endereco && endereco.numEndereco ? endereco.numEndereco : "");
+      	  $('input[name="complemento"]').val(endereco && endereco.complemento ? endereco.complemento : "");
+        }
+
+      function limparCampos() {
+    	  $('#formcadastro').each (function(){
+    		  this.reset();
+    		});
+        }
+      
+      
+      function procuraCep() {
+        var cep = $('input[name="numCep"]').val();
+        
+        if (cep == '') {
+          return;
+        }
+        
+        limparMensagens();
+        carregaFormulario();
+        
+        $.ajax({
+          type: "GET",
+          url: "/endereco/chamadaServiceCEP/"+cep,
+          success: function(json) {
+        	  if (json.numCep != cep) {
+        		  carregaFormulario(json);
+	              	exibirMensagem('A pesquisa encontrou o Cep ' + json.numCep + ' por proximidade.', $("#msgAlert"));
+        	  }else{
+        		  carregaFormulario(json);
+        		  exibirMensagem('O Cep ' + json.numCep + ' foi encontrado!.', $("#msgSuccess"));
+           	  }
+          },
+          error: function(data) {
+          	exibirMensagem('O cep '+cep+" não foi encontrado.", $("#msgError"));
+            return;
+        }
+        });
+      }
+
+      $("#btnSalvar").click(function(e){
+          e.preventDefault();
+          salvarEndereco();
+       });
+
+      function salvarEndereco() {
+        limparMensagens();
+      	if (!$("#formcadastro").valid()) {
+            return;
+        }
+          
+      	var campos = $("#formcadastro :input");
+          var endereco = {};
+          $.each(campos, function(index, dado){
+            if (dado.type == 'text' || dado.type == 'hidden') {
+              var nome = dado.name;
+              if (nome != '') {
+                endereco[nome] = dado.value;
+              }
+            }
+          });
+          
+          var requestType = enderecoId != null ? "PUT" : "POST";
+          
+          var json = JSON.stringify(endereco);
+          $.ajax({
+            headers: { 
+              'Content-Type': 'application/json' 
+            },
+            type: requestType,
+            url: "/endereco",
+            data: json,
+            success: function(data) {
+              limparCampos();
+              $(window.document.location).attr('href',"/exibirEnderecos");
+            },
+            error: function(data) {
+          		var msgError;
+          		if (data.responseText) {
+          	  		var responseText = JSON.parse(data.responseText);
+          	 		msgError = responseText["message"];
+              	} else {
+                	msgError = data.statusText;
+              	}
+          		exibirMensagem('O endereço não pôde ser salvo: ' + msgError, $("#msgError"));
+            }
+          });
+        }
+      
+      
+      $(document).ready(function() {
+    	  limparMensagens();
+		  
+          if (enderecoId) {
+              carregaEndereco();
+           }
+          
+    	  $("#cep").mask("99999999");
+          $( "input[name='numCep']" ).change(function() {
+        	procuraCep();
+        });
+
+
+          function carregaEndereco() {
+        	  limparMensagens();
+              
+              $.ajax({
+                url: "/endereco/"+enderecoId,
+                dataType: 'json',
+                success: function(json) {
+	              	if (json) {
+	              		carregaFormulario(json);
+	              	}
+                },
+                error: function(data){
+                	exibirMensagem('Não foi possível carregar o endereço.', $("#msgError"));
+                }
+              });
+            }
+      });
+    /*]]>*/
+    </script>
+	</body>
+</html>

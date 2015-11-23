@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html 
+
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="index" 
+	lang="pt-br">
+
+	<body>
+		<div layout:fragment="content" class="container">
+			<div class="ca-box">
+				<section id="forms">
+					<h2>Endereço detalhado</h2>
+					<table id="tabela" class="table table-hover">
+						<thead>
+							<tr>
+								<td><Strong>Id:</Strong></td>
+								<td th:text="${endereco.id}"> </td>
+							</tr>
+							<tr>
+								<td><Strong>Logradouro:</Strong></td>
+								<td th:text="${endereco.logradouro}"></td>
+							</tr>
+							<tr>
+								<td><Strong>Número</Strong></td>
+								<td th:text="${endereco.numEndereco}"></td>
+							</tr>
+							<tr>
+								<td><Strong>Complemento:</Strong></td>
+								<td th:text="${endereco.complemento}"></td>
+							</tr>
+							<tr>
+								<td><Strong>Bairro:</Strong></td>
+								<td th:text="${endereco.bairro}"></td>
+							</tr>
+							<tr>
+								<td><Strong>Município:</Strong></td>
+								<td th:text="${endereco.cidade}"></td>
+							</tr>
+							<tr>
+								<td><Strong>UF:</Strong></td>
+								<td th:text="${endereco.estado}"></td>
+							</tr>
+							<tr>
+								<td><Strong>Cep:</Strong></td>
+								<td th:text="${endereco.numCep}"></td>
+							</tr>
+						</thead>
+					</table>
+					
+					<a class="btn btn-embossed btn-primary form-group" href="exibirEnderecos.html" th:href="@{/exibirEnderecos}" role="button">Voltar</a>
+				</section>
+			</div>
+		</div>
+	<script layout:fragment="jsOnPage" th:inline="javascript">
+    /*<![CDATA[*/
+      $(document).ready(function() {
+    	  limparMensagens();
+        });
+    /*]]>*/
+    </script>
+	</body>
+</html>

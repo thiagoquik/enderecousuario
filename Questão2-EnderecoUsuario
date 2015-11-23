@@ -1,0 +1,104 @@
+### Link para baixar o projeto ###
+
+GitHub:
+Google Drive:
+
+=========================================================================================================================================================================================================
+### Pré requisitos ###
+
+- Excecutar a aplicação pesquisa-cep para disponibilizar o serviço de pesquisa de ceps
+- Java 8
+- Maven
+
+=========================================================================================================================================================================================================
+### Descrição da aplicação ###
+
+A aplicação disponibiliza uma listagem de Endereços pré carregados pelo arquivo data.sql, onde é possível excluir e editar o endereço selecionado.
+Para a funcionalidade de criação de um novo endereço a aplicação consome um serviço REST no formado JSON de outra aplicação chamada pesquisa-cep. Após consumir este serviço a aplicação verifica se existe
+o cep digitado, se ele nao exister a aplicação nao deixará o usuário criar um novo endereço, caso o cep existir a aplicação irá auto preencher a tela com os dados do cep que foi recebido em JSON possibilitando
+assim a criação de um novo endereço.
+Os campos CEP, LOGRADOURO, CIDADE, ESTADO e NÚMERO são de preenchimento obrigatório e caso não sejam digitados a aplicação irá exibir uma mensagem comunicando o usuário.
+Caso haja algum erro durante a criação, alteração e remoção de um endereço a aplicação fará rollback das informações e exibirá uma mensagem notificando o usuário de que os dados não foram inseridos.
+Todo o manuseio do objeto Endereço é feio por ID.
+
+=========================================================================================================================================================================================================
+### Frameworks e ferramentas utilizadas ###
+
+O projeto foi desenvolvido utilizando os seguintes tecnologias:
+- Java 8
+- Spring Boot
+- Spring Web Mvc
+- Tomcat embutido
+- HSQLDB embutido
+- Bootstrap
+- Thymeleaf
+- JavaScript
+- JQuery
+- JPA
+- Maven
+- JUNIT
+- GSON
+
+=========================================================================================================================================================================================================
+### Arquitetura do projeto ###
+
+O projeto foi desenvolvido em SpringBoot utitilizando MVC, onde foi criado as camadas, Controller, Entitys, Exceptions, Repository, Service.
+O servidor de aplicação é o Tomcat embutido, ele é executado automaticamente com a aplicação, sendo assim ele nao aparece na Aba Server da IDE.
+Caso precise alterar alguma configuração do Spring e do Tomcat utilizar o arquivo \src\main\resources\application.properties
+O banco de dados utilizado foi o HSQLDB embutido onde é executado em memória automaticamente junto com a aplicação. Onde há uma carga de dados prévia no arquivo \src\main\resources\data.sql
+
+CAMADA DA APLICAÇÃO
+\src\main\java\br.com.tgolopes.controller
+Controller: é a camada onde é feita a orquestração das resquisições GET, POST, DELETE, PUT feitas pelo navegador e assim podendo redirecionar para tela ou método responsável pela execução
+isso é feito por causa da anotação @RequestMapping.
+Esta camada também é responsável por disponibilizar e consumir um serviço REST pela anotação @RestController que recebe e responde utilizando o formato JSON.
+
+\src\main\java\br.com.tgolopes.entity
+Entity: é a camada onde se encontram as classes modelos onde o JPA as transformam em tabelas no banco de dados pela anotação @Entity.
+
+\src\main\java\br.com.tgolopes.exception
+Exception: é a camada onde são orquestradas as exceções lançadas pela aplicação pela anotação @ControllerAdvice.
+
+\src\main\java\br.com.tgolopes.repository
+Reposotiry: é a camada do Spring que faz a função da camada DAO por meio de uma interface onde não precisa ser implementados os métodos básicos de um crud por exemplo save, delete, findall.
+Nesta camada também é possível criar buscar específicas como procurar um cep por um atributo específico, e para isso basta utilizar a convenção do Spring Repository findOneByNOMEDOATRIBUTO.
+
+\src\main\java\br.com.tgolopes.service
+Service: é a camada onde consumimos os métodos da interface Repository. Os métodos criados na camada de service são consumidos pela camada Controller.
+Esta camada também é responsável por gerenciar a transação com o banco de dados, por meio da anotação @Transational podemos garantir a abertura e fechamento de uma conexão e caso ocorra algum erro a aplicação executa o rollback.
+
+CAMADA DE TESTES 
+\src\test\java\br.com.tgolopes.controller
+Os testes foram feitos visando a validação da regra de negócio onde é validado se o endereço foi criado, excluido, alterado, consultado corretamente.
+
+CAMADA WEB
+\src\main\resources\templates - Telas da aplicação 
+\src\main\resources\static\css - Arquivos CSS
+\src\main\resources\static\fonts - Arquivos de Fonts
+\src\main\resources\static\js - Arquivos JavaScript
+
+FLUXO DA APLICAÇÃO
+Camada web > Camada Controller > Camada Service 
+
+=========================================================================================================================================================================================================
+	
+### Configurações ###
+
+Os arquivos de propriedades da aplicação se encontram no caminho: src/main/resources
+
+-Application.properties : arquivo de propriedades do Spring
+-data.sql: Este arquivo possui a carga de dados inicial da aplicação. Este arquivo é executado automaticamente quando a aplicação for iniciada.
+
+A aplicação está configurada para subir na porta 8082. Caso haja necessidade de alterar esta porta é só alterar o número dela na propriedade server.port do arquivo Application.properties.
+
+=========================================================================================================================================================================================================
+### Execução do projeto ###
+
+ANTES DE EXECUTAR ESTA APLICAÇÃO POR FAVOR EXECUTE A APLICAÇÃO pesquisa-cep PARA O SERVIÇO DE BUSCA DE CEP FICAR DISPONÍVEL PARA ESTA APLICAÇÃO PODER CONSUMI-LO.
+
+Maven: $ mvn clean package spring-boot:run
+
+Utilizando uma IDE: Executar a classe \src\main\java\br\com\tgolopes\EnderecoUsuarioApplication.java
+	
+Abra o browser e digite http://localhost:8082 esta é a página inicial da aplicação.
+
